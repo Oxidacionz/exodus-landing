@@ -397,20 +397,20 @@ export function App() {
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.75rem' }}>Ticket de Venta #00482</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <span>1x PC SFF Core i5 (6ta Gen) 8/128GB</span>
-                      <strong>$169.98</strong>
+                      <span>1x Impresora Térmica POS 80mm</span>
+                      <strong>$65.00</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <span>2x Cable de Poder Standard 1.5m</span>
-                      <strong>$3.60</strong>
+                      <span>2x Lector de Código de Barras Laser</span>
+                      <strong>$70.00</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0 0', marginTop: '0.75rem', fontSize: '1.1rem', fontWeight: 700, color: '#818cf8' }}>
                       <span>TOTAL USD:</span>
-                      <span>$173.58</span>
+                      <span>$135.00</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#34d399' }}>
                       <span>TOTAL BS (BCV):</span>
-                      <span>{(173.58 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</span>
+                      <span>{(135.00 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</span>
                     </div>
                   </div>
                   <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1rem', borderRadius: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -431,17 +431,17 @@ export function App() {
                 <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', marginBottom: '1rem' }}>Gestión de Inventario Multi-Sucursal</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem' }}>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sede Central JRZ</span>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sucursal Principal</span>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#818cf8' }}>141 Artículos</div>
                     <span style={{ fontSize: '0.75rem', color: '#10b981' }}>🟢 Stock Óptimo</span>
                   </div>
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem' }}>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sucursal Virtudes</span>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sucursal Norte / Almacén</span>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#818cf8' }}>98 Artículos</div>
                     <span style={{ fontSize: '0.75rem', color: '#f59e0b' }}>⚠️ Alerta Stock Mínimo</span>
                   </div>
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem' }}>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sucursal Zamora</span>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Sucursal Centro / Express</span>
                     <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#818cf8' }}>210 Artículos</div>
                     <span style={{ fontSize: '0.75rem', color: '#10b981' }}>🟢 Stock Óptimo</span>
                   </div>
@@ -453,9 +453,9 @@ export function App() {
               <div>
                 <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', marginBottom: '1rem' }}>Bot CRM WhatsApp Automatizado</h3>
                 <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem', fontSize: '0.9rem' }}>
-                  <div style={{ color: '#25D366', fontWeight: 600, marginBottom: '0.5rem' }}>💬 Mensaje Enviado a +58 412-5494755:</div>
+                  <div style={{ color: '#25D366', fontWeight: 600, marginBottom: '0.5rem' }}>💬 Mensaje Enviado al Cliente (WhatsApp):</div>
                   <p style={{ background: 'rgba(37, 211, 102, 0.1)', padding: '0.75rem', borderRadius: '0.5rem', color: '#cbd5e1' }}>
-                    "¡Hola Carlos! Tu compra #00482 por <strong>$173.58 USD ({(173.58 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs)</strong> ha sido procesada exitosamente. Adjuntamos tu comprobante digital PDF. 📄"
+                    "¡Hola! Tu compra #00482 por <strong>$135.00 USD ({(135.00 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs)</strong> ha sido procesada exitosamente. Adjuntamos tu comprobante digital PDF. 📄"
                   </p>
                 </div>
               </div>
