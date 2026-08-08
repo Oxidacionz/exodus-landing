@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Terminal,
   Zap,
@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   ArrowRight,
   CheckCircle2,
-  PhoneCall,
   DollarSign,
   Clock,
   ChevronDown,
@@ -21,7 +20,9 @@ import {
   Database,
   Gift,
   FileSpreadsheet,
-  Headphones
+  Headphones,
+  Mail,
+  MessageCircle
 } from 'lucide-react';
 
 export function App() {
@@ -32,6 +33,31 @@ export function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [showDemoModal, setShowDemoModal] = useState<boolean>(false);
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+
+  // Live BCV Rate State
+  const [bcvRate, setBcvRate] = useState<number>(756.71);
+  const [bcvDate, setBcvDate] = useState<string>('Hoy');
+  const [loadingBcv, setLoadingBcv] = useState<boolean>(true);
+
+  // Fetch real BCV rate live from API
+  useEffect(() => {
+    fetch('https://ve.dolarapi.com/v1/dolares/oficial')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.promedio) {
+          setBcvRate(Number(data.promedio));
+          if (data.fechaActualizacion) {
+            const dateObj = new Date(data.fechaActualizacion);
+            setBcvDate(dateObj.toLocaleDateString('es-VE', { day: '2-digit', month: '2-digit', year: 'numeric' }));
+          }
+        }
+        setLoadingBcv(false);
+      })
+      .catch((err) => {
+        console.error('Error al sincronizar la tasa BCV en vivo:', err);
+        setLoadingBcv(false);
+      });
+  }, []);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -49,12 +75,33 @@ export function App() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Construct WhatsApp message text with user details
+    const dbLabel =
+      formData.dbOption === 'scratch' ? 'Base de Datos Limpia (Desde 0)' :
+      formData.dbOption === 'client' ? 'Carga por el Cliente (Plantilla Excel Gratis)' :
+      'Carga Asistida por SmartBytes (Servicio Técnico)';
+
+    const textMsg = `Hola SmartBytes, deseo registrar mi empresa en SB_ERP (Promoción 4 MESES GRATIS):\n\n` +
+      `👤 *Nombre:* ${formData.name}\n` +
+      `🏢 *Empresa:* ${formData.company}\n` +
+      `📱 *WhatsApp:* ${formData.phone}\n` +
+      `✉️ *Correo:* ${formData.email}\n` +
+      `🗄️ *Modalidad DB:* ${dbLabel}\n` +
+      `📦 *Plan:* ${formData.plan}`;
+
+    const encodedText = encodeURIComponent(textMsg);
+    const waUrl = `https://wa.me/584125494755?text=${encodedText}`;
+
+    // Open direct WhatsApp chat
+    window.open(waUrl, '_blank');
+
     setFormSubmitted(true);
     setTimeout(() => {
       setFormSubmitted(false);
       setShowDemoModal(false);
       setFormData({ name: '', company: '', phone: '', email: '', dbOption: 'scratch', plan: 'Versión Online (4 Meses Gratis)' });
-    }, 3000);
+    }, 4000);
   };
 
   return (
@@ -162,11 +209,29 @@ export function App() {
             <a href="#modulos" style={navLinkStyle}>Módulos</a>
             <a href="#roi" style={navLinkStyle}>Calculadora ROI</a>
             <a href="#precios" style={navLinkStyle}>Planes</a>
-            <a href="#faq" style={navLinkStyle}>Preguntas</a>
+            <a href="#contacto" style={navLinkStyle}>Contacto</a>
           </nav>
 
           {/* Action CTAs */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <a
+              href="https://wa.me/584125494755"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                color: '#25D366',
+                textDecoration: 'none',
+                fontSize: '0.85rem',
+                fontWeight: 600
+              }}
+            >
+              <MessageCircle size={18} />
+              <span>Contáctame</span>
+            </a>
+
             <button
               onClick={() => setShowDemoModal(true)}
               className="btn btn-primary"
@@ -218,7 +283,7 @@ export function App() {
             maxWidth: '780px',
             margin: '0 auto 2.5rem'
           }}>
-            Registra tu empresa en nuestra <strong>versión Online en la nube</strong> y disfruta de <strong>4 meses completamente gratis</strong> con 1 Caja activa y usuario administrador. Gestiona POS, Inventario, Facturación Multi-moneda y Tasa BCV.
+            Registra tu empresa en nuestra <strong>versión Online en la nube</strong> y disfruta de <strong>4 meses completamente gratis</strong> con 1 Caja activa y usuario administrador. Gestiona POS, Inventario, Facturación Multi-moneda y Tasa BCV Oficial en tiempo real.
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -231,11 +296,14 @@ export function App() {
             </button>
 
             <a
-              href="#modalidades"
+              href="https://wa.me/584125494755"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-secondary"
-              style={{ padding: '1rem 2rem', fontSize: '1.05rem' }}
+              style={{ padding: '1rem 2rem', fontSize: '1.05rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              Ver Versión Online vs Local <Globe size={18} />
+              <MessageCircle size={18} color="#25D366" />
+              <span>Contáctame por WhatsApp</span>
             </a>
           </div>
 
@@ -256,7 +324,7 @@ export function App() {
               <CheckCircle2 size={18} color="#10b981" /> Inicia Desde 0 o Carga tu Inventario
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CheckCircle2 size={18} color="#10b981" /> Disponible en la Nube u On-Premise Local
+              <CheckCircle2 size={18} color="#10b981" /> Tasa BCV Sincronizada en Tiempo Real ({bcvRate.toFixed(2)} Bs)
             </div>
           </div>
         </div>
@@ -284,7 +352,7 @@ export function App() {
                 { id: 'pos', label: 'POS Venta Rápida', icon: ShoppingBag },
                 { id: 'inventory', label: 'Inventario & Lotes', icon: PackageCheck },
                 { id: 'whatsapp', label: 'WhatsApp Bot CRM', icon: MessageSquareCode },
-                { id: 'finance', label: 'Finanzas & Tasa BCV', icon: TrendingUp }
+                { id: 'finance', label: 'Finanzas & BCV en Vivo', icon: TrendingUp }
               ].map((tab) => {
                 const Icon = tab.icon;
                 const isSelected = activeTab === tab.id;
@@ -322,7 +390,7 @@ export function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                   <h3 style={{ fontSize: '1.2rem', color: '#f8fafc' }}>Terminal de Venta POS — Caja #1 (Versión Online)</h3>
                   <span style={{ color: '#10b981', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(16, 185, 129, 0.1)', padding: '0.2rem 0.6rem', borderRadius: '1rem' }}>
-                    🟢 En Línea • Tasa BCV: 36.50 BS/USD
+                    🟢 Tasa BCV Oficial: {bcvRate.toFixed(2)} BS/USD
                   </span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
@@ -342,7 +410,7 @@ export function App() {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#34d399' }}>
                       <span>TOTAL BS (BCV):</span>
-                      <span>6,335.67 Bs</span>
+                      <span>{(173.58 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</span>
                     </div>
                   </div>
                   <div style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1rem', borderRadius: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -385,9 +453,9 @@ export function App() {
               <div>
                 <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', marginBottom: '1rem' }}>Bot CRM WhatsApp Automatizado</h3>
                 <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem', fontSize: '0.9rem' }}>
-                  <div style={{ color: '#25D366', fontWeight: 600, marginBottom: '0.5rem' }}>💬 Mensaje Enviado a +58 412-***4321:</div>
+                  <div style={{ color: '#25D366', fontWeight: 600, marginBottom: '0.5rem' }}>💬 Mensaje Enviado a +58 412-5494755:</div>
                   <p style={{ background: 'rgba(37, 211, 102, 0.1)', padding: '0.75rem', borderRadius: '0.5rem', color: '#cbd5e1' }}>
-                    "¡Hola Carlos! Tu compra #00482 por <strong>$173.58 USD (6,335.67 Bs)</strong> ha sido procesada exitosamente. Adjuntamos tu comprobante digital PDF. 📄"
+                    "¡Hola Carlos! Tu compra #00482 por <strong>$173.58 USD ({(173.58 * bcvRate).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs)</strong> ha sido procesada exitosamente. Adjuntamos tu comprobante digital PDF. 📄"
                   </p>
                 </div>
               </div>
@@ -398,9 +466,11 @@ export function App() {
                 <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', marginBottom: '1rem' }}>Finanzas & Actualización de Tasa BCV</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem' }}>
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Tasa Oficial BCV Hoy</span>
-                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#34d399' }}>36.50 Bs / USD</div>
-                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Última sincro: Hace 15 minutos</span>
+                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Tasa Oficial BCV (Sincronizada en Vivo)</span>
+                    <div style={{ fontSize: '1.75rem', fontWeight: 700, color: '#34d399' }}>
+                      {loadingBcv ? 'Cargando...' : `${bcvRate.toFixed(2)} Bs / USD`}
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Fecha Oficial: {bcvDate}</span>
                   </div>
                   <div style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1rem', borderRadius: '0.5rem' }}>
                     <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Ventas del Día</span>
@@ -472,7 +542,7 @@ export function App() {
                 <CheckCircle2 size={18} color="#10b981" /> Incluye 1 Caja activa para facturación
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <CheckCircle2 size={18} color="#10b981" /> Acceso inmediato desde cualquier dispositivo con internet
+                <CheckCircle2 size={18} color="#10b981" /> Sincronización automática de Tasa BCV Oficial
               </li>
             </ul>
 
@@ -513,16 +583,15 @@ export function App() {
               </li>
             </ul>
 
-            <button
-              onClick={() => {
-                setFormData({ ...formData, plan: 'Versión Local (Servidor On-Premise)' });
-                setShowDemoModal(true);
-              }}
+            <a
+              href="https://wa.me/584125494755?text=Hola%20SmartBytes,%20deseo%20informaci%C3%B3n%20sobre%20la%20Instalaci%C3%B3n%20Local%20de%20SB_ERP"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn btn-secondary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none' }}
             >
-              Solicitar Instalación Local <PhoneCall size={16} />
-            </button>
+              <MessageCircle size={16} color="#25D366" /> Solicitar Instalación Local
+            </a>
           </div>
         </div>
       </section>
@@ -610,7 +679,7 @@ export function App() {
             { title: 'Inventario por Lotes y Seriales', desc: 'Trazabilidad completa para electrónicos, repuestos y mercancía con garantía.', icon: PackageCheck },
             { title: 'Chatbot CRM WhatsApp', desc: 'Envío automático de recibos digitales y notificaciones de cobranza al cliente.', icon: MessageSquareCode },
             { title: 'Control Multi-Sucursal', desc: 'Sincroniza existencias y reportes consolidados entre múltiples tiendas.', icon: Building2 },
-            { title: 'Tasa BCV Automática', desc: 'Actualización transparente cada 6 horas directo desde la fuente oficial.', icon: TrendingUp },
+            { title: 'Tasa BCV en Tiempo Real', desc: 'Conexión automática a la tasa oficial del Banco Central de Venezuela.', icon: TrendingUp },
             { title: 'Seguridad y Roles', desc: 'Permisos granulares por cajero, supervisor y administrador de tienda.', icon: ShieldCheck }
           ].map((mod, idx) => {
             const Icon = mod.icon;
@@ -869,7 +938,7 @@ export function App() {
             },
             {
               q: '¿Cómo funciona la sincronización automática de la Tasa BCV?',
-              a: 'El sistema consulta automáticamente cada 6 horas la tasa publicada en el Banco Central de Venezuela (USD y EUR). Actualiza los precios equivalentes en bolívares en tiempo real para evitar pérdidas cambiarias.'
+              a: 'El sistema consulta automáticamente en tiempo real la tasa oficial publicada por el Banco Central de Venezuela. Actualiza los precios equivalentes en bolívares al instante para evitar pérdidas cambiarias.'
             }
           ].map((faq, idx) => (
             <div
@@ -892,13 +961,13 @@ export function App() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer style={{
+      {/* FOOTER & CONTACTO */}
+      <footer id="contacto" style={{
         background: '#060911',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         padding: '4rem 1.5rem 2rem'
       }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2.5rem', marginBottom: '3rem' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2.5rem', marginBottom: '3rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
               <Terminal size={22} color="#818cf8" />
@@ -919,12 +988,35 @@ export function App() {
             </ul>
           </div>
 
+          {/* CONTACT & SUPPORT DIRECT LINKS */}
           <div>
             <h4 style={{ fontSize: '0.9rem', color: '#f8fafc', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Contacto & Soporte</h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>
-              <li>📞 +58 (241) 888-4321</li>
-              <li>✉️ contacto@smartbytes.pf</li>
-              <li>📍 Valencia, Carabobo - Venezuela</li>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.88rem', color: '#94a3b8' }}>
+              <li>
+                <a
+                  href="https://wa.me/584125494755?text=Hola%20SmartBytes,%20deseo%20contactarme%20para%20m%C3%A1s%20informaci%C3%B3n"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#25D366', textDecoration: 'none', fontWeight: 600 }}
+                >
+                  <MessageCircle size={18} />
+                  <span>Contáctame (WhatsApp): 0412-5494755</span>
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="mailto:smartbytesbusinesspf@gmail.com"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}
+                >
+                  <Mail size={18} />
+                  <span>Contáctame (Correo): smartbytesbusinesspf@gmail.com</span>
+                </a>
+              </li>
+
+              <li style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                📍 Punto Fijo, Falcón - Venezuela
+              </li>
             </ul>
           </div>
         </div>
@@ -961,10 +1053,10 @@ export function App() {
             {formSubmitted ? (
               <div style={{ textAlign: 'center', padding: '2rem 0' }}>
                 <CheckCircle2 size={56} color="#10b981" style={{ margin: '0 auto 1rem' }} />
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>¡Registro Exitoso!</h3>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>¡Enviado a WhatsApp!</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                  Tu empresa <strong>{formData.company || 'Empresa'}</strong> ha sido registrada exitosamente en la versión Online con <strong>4 MESES GRATIS</strong> y 1 Caja activa.<br />
-                  Hemos enviado las credenciales de acceso a tu WhatsApp <strong>{formData.phone}</strong>.
+                  Hemos abierto WhatsApp con los datos de tu empresa <strong>{formData.company || 'Empresa'}</strong> para enviarlo directamente a nuestro equipo.<br />
+                  Te contactaremos de inmediato para activar tus <strong>4 MESES GRATIS</strong>.
                 </p>
               </div>
             ) : (
@@ -974,7 +1066,7 @@ export function App() {
                 </div>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.4rem' }}>Registrar Mi Empresa y Usuario</h3>
                 <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-                  Crea tu cuenta de administración con 1 Caja activa para empezar a facturar de inmediato.
+                  Crea tu cuenta de administración con 1 Caja activa para empezar a facturar de inmediato. Al enviar, se conectará directamente con nuestro WhatsApp.
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', marginBottom: '1.25rem' }}>
@@ -1008,7 +1100,7 @@ export function App() {
                       <input
                         type="tel"
                         required
-                        placeholder="+58 412-1234567"
+                        placeholder="0412-1234567"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         style={modalInputStyle}
@@ -1069,8 +1161,9 @@ export function App() {
                   </div>
                 </div>
 
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }}>
-                  Activar Mis 4 Meses Gratis <Zap size={16} />
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <MessageCircle size={18} color="#25D366" />
+                  <span>Enviar Registro a WhatsApp (4 Meses Gratis)</span>
                 </button>
               </form>
             )}
