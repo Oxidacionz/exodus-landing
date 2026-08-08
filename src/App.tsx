@@ -1000,17 +1000,17 @@ export function App() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#25D366', textDecoration: 'none', fontWeight: 600 }}
                 >
                   <MessageCircle size={18} />
-                  <span>Contáctame (WhatsApp): 0412-5494755</span>
+                  <span>Contáctame por WhatsApp</span>
                 </a>
               </li>
 
               <li>
                 <a
-                  href="mailto:smartbytesbusinesspf@gmail.com"
+                  href="mailto:smartbytesbusinesspf@gmail.com?subject=Consulta%20SB_ERP"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}
                 >
                   <Mail size={18} />
-                  <span>Contáctame (Correo): smartbytesbusinesspf@gmail.com</span>
+                  <span>Contáctame por Correo</span>
                 </a>
               </li>
 
@@ -1053,10 +1053,9 @@ export function App() {
             {formSubmitted ? (
               <div style={{ textAlign: 'center', padding: '2rem 0' }}>
                 <CheckCircle2 size={56} color="#10b981" style={{ margin: '0 auto 1rem' }} />
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>¡Enviado a WhatsApp!</h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                  Hemos abierto WhatsApp con los datos de tu empresa <strong>{formData.company || 'Empresa'}</strong> para enviarlo directamente a nuestro equipo.<br />
-                  Te contactaremos de inmediato para activar tus <strong>4 MESES GRATIS</strong>.
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.75rem', color: '#fff' }}>¡Mensaje Enviado!</h3>
+                <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '420px', margin: '0 auto' }}>
+                  Se te enviará un correo de confirmación y una vez nuestro equipo revise la solicitud se comunicarán contigo.
                 </p>
               </div>
             ) : (
